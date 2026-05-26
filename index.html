@@ -2,236 +2,102 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Meridian-Quiz</title>
 
 <style>
 body {
-  font-family: sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background: #f5f5f5;
-  text-align: center;
   margin: 0;
+  text-align: center;
 }
 
-/* ✅ 戻るボタン */
-.back-button {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  background: #0078d7;
-  color: white;
-  padding: 8px 12px;
-  border-radius: 6px;
-  text-decoration: none;
+.back-link {
+  margin: 12px 0;
   font-size: 14px;
-  z-index: 1000;
 }
 
-.back-button:hover {
-  background: #005fa3;
+.back-link a {
+  color: #000;
+  text-decoration: none;
 }
 
 .container {
   max-width: 600px;
-  margin: 40px auto;
+  margin: 0 auto 40px;
   background: #fff;
-  padding: 25px;
-  border-radius: 10px;
+  padding: 30px;
+  border-radius: 12px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 h1 {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
-#keirakuList {
+h2 {
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.checkbox-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 5px;
+  gap: 8px;
   text-align: left;
-  margin-top: 10px;
-}
-
-label {
-  display: block;
-  padding: 5px;
+  margin-bottom: 20px;
 }
 
 button {
   width: 100%;
-  padding: 15px;
-  margin-top: 20px;
+  padding: 14px;
+  font-size: 16px;
+  background: #377bd1;
+  color: white;
   border: none;
   border-radius: 8px;
-  background: #0078d7;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #005fa3;
-}
-
-#question {
-  font-size: 20px;
-  margin: 20px 0;
-}
-
-#options button {
-  margin: 5px 0;
-}
-
-#progress {
-  margin-top: 15px;
-  font-size: 14px;
-  color: gray;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ✅ 戻るボタン -->
-https://kaoman0079-ops.github.io/Meridian-Node/
-  ← 戻る
-</a>
+<!-- ✅ 他サイトと同じ「戻る」 -->
+<div class="back-link">
+  https://kaoman0079-ops.github.io/Meridian-Node/
+    https://kaoman0079-ops.github.io/Meridian-Node/ ← 戻る
+  </a>
+</div>
 
 <div class="container">
 
-<h1>Meridian-Quiz</h1>
-
-<div id="menu">
-
-  <h3>出題する経絡を選択</h3>
+  <h1>Meridian-Quiz</h1>
+  <h2>出題する経絡を選択</h2>
 
   <label>
-    <input type="checkbox" id="allCheck" checked onchange="toggleAll()">
+    <input type="checkbox" checked>
     すべての経絡
   </label>
 
-  <div id="keirakuList">
-    <label><input type="checkbox" class="keiraku" value="肺" checked onchange="onChange()"> 肺経</label>
-    <label><input type="checkbox" class="keiraku" value="大腸" checked onchange="onChange()"> 大腸経</label>
-    <label><input type="checkbox" class="keiraku" value="胃" checked onchange="onChange()"> 胃経</label>
-    <label><input type="checkbox" class="keiraku" value="脾" checked onchange="onChange()"> 脾経</label>
-    <label><input type="checkbox" class="keiraku" value="心" checked onchange="onChange()"> 心経</label>
-    <label><input type="checkbox" class="keiraku" value="小腸" checked onchange="onChange()"> 小腸経</label>
-    <label><input type="checkbox" class="keiraku" value="膀胱" checked onchange="onChange()"> 膀胱経</label>
-    <label><input type="checkbox" class="keiraku" value="腎" checked onchange="onChange()"> 腎経</label>
-    <label><input type="checkbox" class="keiraku" value="心包" checked onchange="onChange()"> 心包経</label>
-    <label><input type="checkbox" class="keiraku" value="三焦" checked onchange="onChange()"> 三焦経</label>
-    <label><input type="checkbox" class="keiraku" value="胆" checked onchange="onChange()"> 胆経</label>
-    <label><input type="checkbox" class="keiraku" value="肝" checked onchange="onChange()"> 肝経</label>
+  <div class="checkbox-grid">
+    <label><input type="checkbox" checked> 肺経</label>
+    <label><input type="checkbox" checked> 大腸経</label>
+    <label><input type="checkbox" checked> 胃経</label>
+    <label><input type="checkbox" checked> 脾経</label>
+    <label><input type="checkbox" checked> 心経</label>
+    <label><input type="checkbox" checked> 小腸経</label>
+    <label><input type="checkbox" checked> 膀胱経</label>
+    <label><input type="checkbox" checked> 腎経</label>
+    <label><input type="checkbox" checked> 心包経</label>
+    <label><input type="checkbox" checked> 三焦経</label>
+    <label><input type="checkbox" checked> 胆経</label>
+    <label><input type="checkbox" checked> 肝経</label>
   </div>
 
-  <button onclick="startQuiz()">スタート</button>
-</div>
-
-<div id="quiz" style="display:none;">
-  <div id="question"></div>
-  <div id="options"></div>
-  <div id="progress"></div>
-</div>
+  <button>スタート</button>
 
 </div>
-
-<script>
-let current = 0;
-let filteredQuiz = [];
-
-const quizData = [
-  {
-    keiraku:"手の太陰肺経",
-    zoufu:"肺",
-    type:"井穴",
-    answer:"少商",
-    options:["少商","魚際","太淵","経渠"]
-  },
-  {
-    keiraku:"手の太陰肺経",
-    zoufu:"肺",
-    type:"栄穴",
-    answer:"魚際",
-    options:["少商","魚際","太淵","経渠"]
-  },
-  {
-    keiraku:"手の太陰肺経",
-    zoufu:"肺",
-    type:"合穴",
-    answer:"尺沢",
-    options:["少商","魚際","太淵","尺沢"]
-  }
-];
-
-function toggleAll() {
-  const allChecked = document.getElementById("allCheck").checked;
-  document.querySelectorAll(".keiraku").forEach(cb => {
-    cb.checked = allChecked;
-  });
-}
-
-function onChange() {
-  const all = document.querySelectorAll(".keiraku").length;
-  const checked = document.querySelectorAll(".keiraku:checked").length;
-  document.getElementById("allCheck").checked = (all === checked);
-}
-
-function startQuiz() {
-  const selected = Array.from(document.querySelectorAll(".keiraku:checked"))
-    .map(cb => cb.value);
-
-  filteredQuiz = quizData.filter(q =>
-    selected.includes(q.zoufu)
-  );
-
-  if (filteredQuiz.length === 0) {
-    alert("経絡を選択してください");
-    return;
-  }
-
-  current = 0;
-  document.getElementById("menu").style.display = "none";
-  document.getElementById("quiz").style.display = "block";
-
-  loadQuestion();
-}
-
-function loadQuestion() {
-  const q = filteredQuiz[current];
-
-  document.getElementById("question").innerText =
-    ${q.keiraku} の ${q.type} はどれ？;
-
-  const optionsArea = document.getElementById("options");
-  optionsArea.innerHTML = "";
-
-  q.options.forEach(option => {
-    const btn = document.createElement("button");
-    btn.innerText = option;
-    btn.onclick = () => checkAnswer(option, q.answer);
-    optionsArea.appendChild(btn);
-  });
-
-  document.getElementById("progress").innerText =
-    ${current + 1} / ${filteredQuiz.length};
-}
-
-function checkAnswer(selected, answer) {
-  if (selected === answer) {
-    alert("正解！");
-  } else {
-    alert(不正解！ 正解は ${answer});
-  }
-
-  current++;
-  if (current < filteredQuiz.length) {
-    loadQuestion();
-  } else {
-    alert("終了！");
-    location.reload();
-  }
-}
-</script>
 
 </body>
 </html>
