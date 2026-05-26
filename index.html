@@ -22,6 +22,7 @@
             margin: 0; padding: 0;
             color: var(--text-main);
             -webkit-text-size-adjust: 100%;
+            text-align: center; /* 全体を中央揃えの基本に */
         }
 
         /* --- スクロール固定＆リターンボタン --- */
@@ -59,88 +60,72 @@
             border: 1px solid var(--border-color);
             box-shadow: 0 4px 16px rgba(0,0,0,0.02);
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* 子要素を中央に */
         }
         @media (max-width: 640px) {
             .container { margin-top: 70px; padding: 25px 12px; border-radius: 18px; }
         }
 
-        h1 { font-size: 1.8rem; font-weight: 800; margin: 0 0 5px 0; letter-spacing: -0.02em; text-align: center; }
-        .subtitle { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 25px; font-weight: 600; text-align: center; }
-        h3 { font-size: 0.9rem; margin: 25px 0 12px 5px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+        h1 { font-size: 1.8rem; font-weight: 800; margin: 0 0 5px 0; letter-spacing: -0.02em; width: 100%; }
+        .subtitle { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 25px; font-weight: 600; width: 100%; }
+        h3 { font-size: 0.9rem; margin: 25px 0 12px 0; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; width: 100%; text-align: center; }
 
         /* --- 設定画面UI --- */
-        .setup-section { margin-bottom: 30px; }
+        #setup-screen { width: 100%; }
+        .setup-section { margin-bottom: 30px; width: 100%; display: flex; flex-direction: column; align-items: center; }
 
-        /* 問題数プルダウンのスタイリング */
+        /* 問題数プルダウン */
         .select-styled {
-            width: 100%; padding: 14px; border-radius: 14px; border: 2px solid var(--border-color);
+            width: 100%; max-width: 400px; padding: 14px; border-radius: 14px; border: 2px solid var(--border-color);
             font-size: 1rem; font-weight: 700; color: var(--text-main); background-color: var(--main-bg);
-            cursor: pointer; outline: none; transition: border-color 0.2s;
+            cursor: pointer; outline: none; text-align: center; text-align-last: center;
             -webkit-appearance: none; appearance: none;
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%237F8C8D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
             background-repeat: no-repeat; background-position: right 15px center; background-size: 18px;
         }
-        .select-styled:focus { border-color: var(--accent-blue); background-color: #FFFFFF; }
 
         .all-select-wrapper {
             background: #EDF4FA; padding: 14px; border-radius: 14px; margin-bottom: 12px;
             font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; color: #2980B9; transition: background 0.2s;
+            cursor: pointer; color: #2980B9; width: 100%; max-width: 400px; box-sizing: border-box;
         }
-        .all-select-wrapper:hover { background: #E1EEF7; }
         .all-select-wrapper input { margin-right: 10px; transform: scale(1.2); }
 
-        /* リストの展開アニメーション */
         .expandable-list {
-            overflow: hidden; transition: max-height 0.3s ease-out, opacity 0.2s ease; max-height: 500px; opacity: 1;
+            overflow: hidden; transition: max-height 0.3s ease-out, opacity 0.2s ease; max-height: 800px; opacity: 1; width: 100%;
         }
-        .expandable-list.collapsed { max-height: 0; opacity: 0; margin-bottom: 0; pointer-events: none; }
+        .expandable-list.collapsed { max-height: 0; opacity: 0; pointer-events: none; }
 
-        /* 1行に2つ並ぶラジオボタングリッド */
-        .option-grid-2col {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+        /* 1行2つ並ぶ中央揃えグリッド */
+        .option-grid-2col, .checkbox-grid-2col {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 500px;
         }
 
-        /* 1行4列のコンパクトグリッド */
+        /* 1行4列の中央揃えグリッド */
         .checkbox-grid-4col {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 15px;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 100%; max-width: 500px;
         }
-        .checkbox-grid-4col label {
-            background: var(--main-bg); padding: 10px 4px; border-radius: 10px;
-            border: 1px solid var(--border-color); font-size: 0.8rem; font-weight: 700;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 6px; cursor: pointer; text-align: center;
-        }
-        .checkbox-grid-4col input { margin: 0; transform: scale(1.1); }
-
-        /* 穴性用の2列グリッド */
-        .checkbox-grid-2col {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;
-        }
-        .checkbox-grid-2col label, .option-grid-2col label {
-            background: var(--main-bg); padding: 12px 15px; border-radius: 12px;
+        
+        label {
+            background: var(--main-bg); padding: 12px; border-radius: 12px;
             border: 1px solid var(--border-color); font-size: 0.9rem; font-weight: 600;
-            display: flex; align-items: center; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
         }
-        .checkbox-grid-2col input, .option-grid-2col input { margin-right: 10px; transform: scale(1.1); }
+        .checkbox-grid-4col label { flex-direction: column; font-size: 0.8rem; padding: 10px 2px; }
+        label input { margin-right: 10px; transform: scale(1.1); }
+        .checkbox-grid-4col input { margin-right: 0; margin-bottom: 5px; }
 
         .action-btn {
-            width: 100%; padding: 18px; font-size: 1.1rem; background: var(--accent-blue);
+            width: 100%; max-width: 400px; padding: 18px; font-size: 1.1rem; background: var(--accent-blue);
             color: white; border: none; border-radius: 18px; cursor: pointer; font-weight: 800;
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2); transition: background 0.2s, transform 0.1s;
-            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2); transition: 0.2s;
         }
-        .action-btn:active { background: #2980B9; transform: scale(0.98); }
+        .action-btn:active { transform: scale(0.98); background: #2980B9; }
 
-        /* クイズ画面上部中断ボタン */
-        .quiz-abort-btn {
-            background: none; border: 1px solid var(--border-color); color: var(--text-dim);
-            padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: 700;
-            cursor: pointer; transition: all 0.2s;
-        }
-        .quiz-abort-btn:hover { background: #FDEDEC; border-color: var(--accent-red); color: var(--accent-red); }
-
-        /* --- クイズプレイ画面 --- */
+        /* --- クイズ画面 --- */
+        #quiz-screen { width: 100%; }
         .hidden { display: none !important; }
         .progress-bar-container { width: 100%; background: #E9ECEF; height: 6px; border-radius: 3px; margin-bottom: 25px; overflow: hidden; }
         .progress-bar { width: 0%; height: 100%; background: var(--accent-blue); transition: width 0.2s ease; }
@@ -149,24 +134,20 @@
             background: var(--main-bg); border: 1px solid var(--border-color);
             padding: 45px 20px; border-radius: 20px; min-height: 240px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; margin-bottom: 25px;
+            cursor: pointer; margin-bottom: 25px; width: 100%; box-sizing: border-box;
         }
-        .q-hint { font-size: 1rem; color: var(--text-dim); font-weight: 700; margin-bottom: 15px; letter-spacing: 0.05em; }
-        .q-text { font-size: 1.5rem; font-weight: 800; text-align: center; line-height: 1.4; color: var(--text-main); }
+        .q-hint { font-size: 1rem; color: var(--text-dim); font-weight: 700; margin-bottom: 15px; }
+        .q-text { font-size: 1.5rem; font-weight: 800; line-height: 1.4; color: var(--text-main); }
         .divider { width: 80%; height: 1px; background: var(--border-color); margin: 25px 0; }
-        .a-text { font-size: 2.8rem; font-weight: 900; color: var(--accent-blue); text-align: center; animation: popIn 0.15s ease; }
+        .a-text { font-size: 2.8rem; font-weight: 900; color: var(--accent-blue); animation: popIn 0.15s ease; }
         .tap-notice { font-size: 0.8rem; color: var(--text-dim); margin-top: 20px; font-weight: 600; background: #E9ECEF; padding: 4px 12px; border-radius: 12px; }
 
-        .judge-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .judge-btn {
-            padding: 18px; font-size: 1.1rem; font-weight: 800; border: none; border-radius: 16px; cursor: pointer;
-            color: white; display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
+        .judge-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .judge-btn { padding: 18px; font-size: 1.1rem; font-weight: 800; border: none; border-radius: 16px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-correct { background: var(--accent-green); }
         .btn-incorrect { background: var(--accent-red); }
 
-        .result-score { font-size: 3.5rem; font-weight: 900; color: var(--accent-blue); margin: 20px 0; text-align: center; }
-        .result-text { font-size: 1.1rem; font-weight: 700; margin-bottom: 30px; line-height: 1.6; text-align: center; }
+        .quiz-abort-btn { background: none; border: 1px solid var(--border-color); color: var(--text-dim); padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
 
         @keyframes popIn { 0% { transform: scale(0.92); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
@@ -185,8 +166,8 @@
         <section class="setup-section">
             <h3>問題数</h3>
             <select id="question-count-select" class="select-styled">
-                <option value="5">5 問</option>
-                <option value="10" selected>10 問</option>
+                <option value="5" selected>5 問</option>
+                <option value="10">10 問</option>
                 <option value="30">30 問</option>
                 <option value="all">全問出題</option>
             </select>
@@ -196,7 +177,7 @@
             <h3>出題順序</h3>
             <div class="option-grid-2col">
                 <label><input type="radio" name="order-style" value="random" checked> 完全ランダム</label>
-                <label><input type="radio" name="order-style" value="sequence"> 順番通り(流注順)</label>
+                <label><input type="radio" name="order-style" value="sequence"> 順番通り</label>
             </div>
         </section>
 
@@ -207,7 +188,7 @@
             </label>
             <div class="expandable-list collapsed" id="type-list-container">
                 <div class="checkbox-grid-2col">
-                    <label><input type="checkbox" value="五行穴" checked class="type-item-check"> 五行穴 (井〜合)</label>
+                    <label><input type="checkbox" value="五行穴" checked class="type-item-check"> 五行穴</label>
                     <label><input type="checkbox" value="原穴" checked class="type-item-check"> 原穴</label>
                     <label><input type="checkbox" value="郄穴" checked class="type-item-check"> 郄穴</label>
                     <label><input type="checkbox" value="絡穴" checked class="type-item-check"> 絡穴</label>
@@ -278,14 +259,12 @@ let rawDb = []; let quizPool = []; let currentIdx = 0; let correctCount = 0; let
 window.addEventListener("DOMContentLoaded", async () => {
     initMeridianChecks();
     await loadCsvData();
-    
     document.getElementById("all-types").addEventListener("change", (e) => {
         document.getElementById("type-list-container").classList.toggle("collapsed", e.target.checked);
     });
     document.getElementById("all-meridians").addEventListener("change", (e) => {
         document.getElementById("meridian-list-container").classList.toggle("collapsed", e.target.checked);
     });
-
     document.getElementById("start-btn").addEventListener("click", startQuiz);
     document.getElementById("abort-btn").addEventListener("click", backToSetup);
     document.getElementById("card-trigger").addEventListener("click", () => {
@@ -318,29 +297,25 @@ async function loadCsvData() {
             headers.forEach((h, i) => obj[h] = val[i]);
             return obj;
         });
-    } catch (e) { console.error("Data load error"); }
+    } catch (e) { console.error("Data error"); }
 }
 
 function startQuiz() {
     const useAllTypes = document.getElementById("all-types").checked;
     const useAllMeridians = document.getElementById("all-meridians").checked;
     const maxQuestionsSetting = document.getElementById("question-count-select").value;
-    
     const types = useAllTypes ? ["五行穴", "原穴", "郄穴", "絡穴", "募穴"] : 
                   Array.from(document.querySelectorAll(".type-item-check:checked")).map(c => c.value);
     const meridians = useAllMeridians ? MERIDIANS.map(m => m.full) : 
                       Array.from(document.querySelectorAll(".m-check:checked")).map(c => c.value);
 
-    if (types.length === 0 || meridians.length === 0) {
-        alert("少なくとも1つ以上の種類と経絡を選択してください。"); return;
-    }
+    if (types.length === 0 || meridians.length === 0) { alert("選択してください"); return; }
 
     let fullPool = [];
     MERIDIANS.forEach(mMeta => {
         if (!meridians.includes(mMeta.full)) return;
         const row = rawDb.find(r => r["経絡名"] === mMeta.full);
         if (!row) return;
-
         types.forEach(t => {
             if (t === "五行穴") {
                 ["井穴", "滎穴", "輸穴", "経穴", "合穴"].forEach(sub => {
@@ -352,22 +327,14 @@ function startQuiz() {
         });
     });
 
-    if (fullPool.length === 0) { alert("該当する問題データがありません。"); return; }
-
-    const isRandom = document.querySelector('input[name="order-style"]:checked').value === "random";
-    if (isRandom) {
+    if (fullPool.length === 0) return;
+    if (document.querySelector('input[name="order-style"]:checked').value === "random") {
         for (let i = fullPool.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [fullPool[i], fullPool[j]] = [fullPool[j], fullPool[i]];
         }
     }
-
-    if (maxQuestionsSetting === "all") {
-        quizPool = fullPool;
-    } else {
-        const num = parseInt(maxQuestionsSetting, 10);
-        quizPool = fullPool.slice(0, num);
-    }
+    quizPool = maxQuestionsSetting === "all" ? fullPool : fullPool.slice(0, parseInt(maxQuestionsSetting, 10));
 
     currentIdx = 0; correctCount = 0;
     document.getElementById("setup-screen").classList.add("hidden");
@@ -398,10 +365,9 @@ function judge(win) {
 
 function showResult() {
     document.getElementById("quiz-screen").classList.add("hidden");
-    const res = document.getElementById("result-screen");
-    res.classList.remove("hidden");
+    document.getElementById("result-screen").classList.remove("hidden");
     document.getElementById("final-score").innerText = `${correctCount} / ${quizPool.length}`;
-    document.getElementById("result-comment").innerText = (correctCount/quizPool.length === 1) ? "完璧です！全問正解！" : "お疲れ様でした！繰り返し挑戦しましょう！";
+    document.getElementById("result-comment").innerText = (correctCount/quizPool.length === 1) ? "完璧です！全問正解！" : "お疲れ様でした！";
 }
 
 function backToSetup() {
