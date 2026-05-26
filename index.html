@@ -12,6 +12,24 @@ body {
   margin: 0;
 }
 
+/* ✅ 戻るボタン */
+.back-button {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: #0078d7;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  z-index: 1000;
+}
+
+.back-button:hover {
+  background: #005fa3;
+}
+
 .container {
   max-width: 600px;
   margin: 40px auto;
@@ -73,6 +91,11 @@ button:hover {
 
 <body>
 
+<!-- ✅ 戻るボタン -->
+https://kaoman0079-ops.github.io/Meridian-Node/
+  ← 戻る
+</a>
+
 <div class="container">
 
 <h1>Meridian-Quiz</h1>
@@ -116,7 +139,6 @@ button:hover {
 let current = 0;
 let filteredQuiz = [];
 
-// サンプルデータ（あとで拡張OK）
 const quizData = [
   {
     keiraku:"手の太陰肺経",
@@ -178,7 +200,7 @@ function loadQuestion() {
   const q = filteredQuiz[current];
 
   document.getElementById("question").innerText =
-    `${q.keiraku} の ${q.type} はどれ？`;
+    ${q.keiraku} の ${q.type} はどれ？;
 
   const optionsArea = document.getElementById("options");
   optionsArea.innerHTML = "";
@@ -191,14 +213,14 @@ function loadQuestion() {
   });
 
   document.getElementById("progress").innerText =
-    `${current + 1} / ${filteredQuiz.length}`;
+    ${current + 1} / ${filteredQuiz.length};
 }
 
 function checkAnswer(selected, answer) {
   if (selected === answer) {
     alert("正解！");
   } else {
-    alert(`不正解！ 正解は ${answer}`);
+    alert(不正解！ 正解は ${answer});
   }
 
   current++;
