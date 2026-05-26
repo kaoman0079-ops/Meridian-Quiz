@@ -1,1 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Meridian-Quiz</title>
 
+<style>
+body {
+  font-family: sans-serif;
+  background: #f5f5f5;
+  text-align: center;
+  margin: 0;
+}
+
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+#keirakuList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  text-align: left;
+  margin-top: 10px;
+}
+
+label {
+  display: block;
+  padding: 5px;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 8px;
+  background: #0078d7;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #005fa3;
+}
+
+#question {
+  font-size: 20px;
+  margin: 20px 0;
+}
+
+#options button {
+  margin: 5px 0;
+}
+
+#progress {
+  margin-top: 15px;
+  font-size: 14px;
+  color: gray;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Meridian-Quiz</h1>
+
+<div id="menu">
+
+  <h3>出題する経絡を選択</h3>
+
+  <label>
+    <input type="checkbox" id="allCheck" checked onchange="toggleAll()">
+    すべての経絡
+  </label>
+
+  <div id="keirakuList">
+    <label><input type="checkbox" class="keiraku" value="肺" checked onchange="onChange()"> 肺経</label>
+    <label><input type="checkbox" class="keiraku" value="大腸" checked onchange="onChange()"> 大腸経</label>
+    <label><input type="checkbox" class="keiraku" value="胃" checked onchange="onChange()"> 胃経</label>
+    <label><input type="checkbox" class="keiraku" value="脾" checked onchange="onChange()"> 脾経</label>
+    <label><input type="checkbox" class="keiraku" value="心" checked onchange="onChange()"> 心経</label>
+    <label><input type="checkbox" class="keiraku" value="小腸" checked onchange="onChange()"> 小腸経</label>
+    <label><input type="checkbox" class="keiraku" value="膀胱" checked onchange="onChange()"> 膀胱経</label>
+    <label><input type="checkbox" class="keiraku" value="腎" checked onchange="onChange()"> 腎経</label>
+    <label><input type="checkbox" class="keiraku" value="心包" checked onchange="onChange()"> 心包経</label>
+    <label><input type="checkbox" class="keiraku" value="三焦" checked onchange="onChange()"> 三焦経</label>
+    <label><input type="checkbox" class="keiraku" value="胆" checked onchange="onChange()"> 胆経</label>
+    <label><input type="checkbox" class="keiraku" value="肝" checked onchange="onChange()"> 肝経</label>
+  </div>
+
+  <button onclick="startQuiz()">スタート</button>
+</div>
+
+<div id="quiz" style="display:none;">
+  <div id="question"></div>
+  <div id="options"></div>
+  <div id="progress"></div>
+</div>
+
+</div>
+
+<script>
+let current = 0;
+let filteredQuiz = [];
+
+// サンプルデータ（あとで拡張OK）
+const quizData = [
+  {
+    keiraku:"手の太陰肺経",
+    zoufu:"肺",
+    type:"井穴",
+    answer:"少商",
+    options:["少商","魚際","太淵","経渠"]
+  },
+  {
+    keiraku:"手の太陰肺経",
+    zoufu:"肺",
+    type:"栄穴",
+    answer:"魚際",
+    options:["少商","魚際","太淵","経渠"]
+  },
+  {
+    keiraku:"手の太陰肺経",
+    zoufu:"肺",
+    type:"合穴",
+    answer:"尺沢",
+    options:["少商","魚際","太淵","尺沢"]
+  }
+];
+
+function toggleAll() {
+  const allChecked = document.getElementById("allCheck").checked;
+  document.querySelectorAll(".keiraku").forEach(cb => {
+    cb.checked = allChecked;
+  });
+}
+
+function onChange() {
+  const all = document.querySelectorAll(".keiraku").length;
+  const checked = document.querySelectorAll(".keiraku:checked").length;
+  document.getElementById("allCheck").checked = (all === checked);
+}
+
+function startQuiz() {
+  const selected = Array.from(document.querySelectorAll(".keiraku:checked"))
+    .map(cb => cb.value);
+
+  filteredQuiz = quizData.filter(q =>
+    selected.includes(q.zoufu)
+  );
+
+  if (filteredQuiz.length === 0) {
+    alert("経絡を選択してください");
+    return;
+  }
+
+  current = 0;
+  document.getElementById("menu").style.display = "none";
+  document.getElementById("quiz").style.display = "block";
+
+  loadQuestion();
+}
+
+function loadQuestion() {
+  const q = filteredQuiz[current];
+
+  document.getElementById("question").innerText =
+    `${q.keiraku} の ${q.type} はどれ？`;
+
+  const optionsArea = document.getElementById("options");
+  optionsArea.innerHTML = "";
+
+  q.options.forEach(option => {
+    const btn = document.createElement("button");
+    btn.innerText = option;
+    btn.onclick = () => checkAnswer(option, q.answer);
+    optionsArea.appendChild(btn);
+  });
+
+  document.getElementById("progress").innerText =
+    `${current + 1} / ${filteredQuiz.length}`;
+}
+
+function checkAnswer(selected, answer) {
+  if (selected === answer) {
+    alert("正解！");
+  } else {
+    alert(`不正解！ 正解は ${answer}`);
+  }
+
+  current++;
+  if (current < filteredQuiz.length) {
+    loadQuestion();
+  } else {
+    alert("終了！");
+    location.reload();
+  }
+}
+</script>
+
+</body>
+</html>
