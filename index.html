@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Meridian-Quiz - 鍼灸学習システム</title>
+    <title>Meridian-Quiz - 超高速一問一答システム</title>
     <style>
         :root {
             --main-bg: #F8F9FA;
@@ -19,13 +19,12 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--main-bg);
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             color: var(--text-main);
             -webkit-text-size-adjust: 100%;
         }
 
-        /* --- スクロール固定＆ポータル連動リターンボタン --- */
+        /* --- スクロール固定＆リターンボタン --- */
         .portal-back-btn {
             position: fixed;
             top: 15px;
@@ -43,17 +42,12 @@
             font-weight: 700;
             display: flex;
             align-items: center;
-            transition: transform 0.1s ease, background 0.2s, border-color 0.2s;
+            transition: transform 0.1s ease, background 0.2s;
         }
         .portal-back-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
         @media (max-width: 680px) {
-            .portal-back-btn {
-                left: 15px;
-                top: 15px;
-                transform: none;
-            }
+            .portal-back-btn { left: 15px; top: 15px; transform: none; }
         }
-        .portal-back-btn:active { transform: scale(0.95); }
 
         /* --- メインコンテナ --- */
         .container {
@@ -70,84 +64,294 @@
             .container { margin-top: 70px; padding: 25px 15px; border-radius: 18px; }
         }
 
-        h1 { font-size: 1.8rem; font-weight: 800; margin: 0 0 5px 0; letter-spacing: -0.02em; }
-        .subtitle { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 25px; font-weight: 600; }
-        h3 { font-size: 1.1rem; margin: 0 0 15px 0; font-weight: 700; color: var(--text-main); }
+        h1 { font-size: 1.8rem; font-weight: 800; margin: 0 0 5px 0; letter-spacing: -0.02em; text-align: center; }
+        .subtitle { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 25px; font-weight: 600; text-align: center; }
+        h3 { font-size: 1rem; margin: 20px 0 10px 5px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
 
-        /* --- セレクターUI --- */
+        /* --- 設定画面UI --- */
         .all-select-wrapper {
-            background: #EDF4FA;
-            padding: 12px;
-            border-radius: 14px;
-            margin-bottom: 15px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #2980B9;
+            background: #EDF4FA; padding: 12px; border-radius: 14px; margin-bottom: 10px;
+            font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: #2980B9;
         }
         .all-select-wrapper input { margin-right: 8px; transform: scale(1.1); }
 
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            text-align: left;
-            margin-bottom: 25px;
+        .checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .checkbox-grid label, .option-group label {
+            background: var(--main-bg); padding: 12px 15px; border-radius: 12px;
+            border: 1px solid var(--border-color); font-size: 0.9rem; font-weight: 600;
+            display: flex; align-items: center; cursor: pointer;
         }
-        .checkbox-grid label {
-            background: var(--main-bg);
-            padding: 12px 15px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .checkbox-grid label:active { background: #E9ECEF; }
-        .checkbox-grid input { margin-right: 10px; transform: scale(1.1); }
+        .checkbox-grid input, .option-group input { margin-right: 10px; transform: scale(1.1); }
 
-        /* --- ボタンデザイン --- */
+        .option-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 25px; }
+
         .action-btn {
-            width: 100%;
-            padding: 16px;
-            font-size: 1.05rem;
-            background: var(--accent-blue);
-            color: white;
-            border: none;
-            border-radius: 16px;
-            cursor: pointer;
-            font-weight: 800;
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
-            transition: background 0.2s, transform 0.1s;
+            width: 100%; padding: 16px; font-size: 1.05rem; background: var(--accent-blue);
+            color: white; border: none; border-radius: 16px; cursor: pointer; font-weight: 800;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2); transition: background 0.2s, transform 0.1s;
         }
         .action-btn:active { background: #2980B9; transform: scale(0.98); }
 
         /* --- クイズプレイ画面レイアウト --- */
         .hidden { display: none !important; }
         
-        .progress-bar-container {
-            width: 100%; background: #E9ECEF; height: 6px; border-radius: 3px; margin-bottom: 20px; overflow: hidden;
-        }
-        .progress-bar {
-            width: 0%; height: 100%; background: var(--accent-blue); transition: width 0.3s ease;
-        }
+        .progress-bar-container { width: 100%; background: #E9ECEF; height: 6px; border-radius: 3px; margin-bottom: 25px; overflow: hidden; }
+        .progress-bar { width: 0%; height: 100%; background: var(--accent-blue); transition: width 0.2s ease; }
 
-        .question-box {
-            background: var(--main-bg);
-            border: 1px solid var(--border-color);
-            padding: 25px 20px;
-            border-radius: 18px;
-            font-size: 1.2rem;
-            font-weight: 800;
-            margin-bottom: 25px;
-            line-height: 1.5;
+        /* フラッシュカード型ボックス */
+        .card-box {
+            background: var(--main-bg); border: 1px solid var(--border-color);
+            padding: 40px 20px; border-radius: 20px; min-height: 220px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; margin-bottom: 25px; transition: background 0.1s;
         }
+        .card-box:active { background: #EBF5FB; }
 
-        .choices-list {
-            display: flex
+        .q-hint { font-size: 0.9rem; color: var(--text-dim); font-weight: 700; margin-bottom: 15px; letter-spacing: 0.05em; }
+        .q-text { font-size: 1.4rem; font-weight: 800; text-align: center; line-height: 1.4; color: var(--text-main); }
+        
+        .divider { width: 80%; height: 1px; background: var(--border-color); margin: 25px 0; }
+
+        .a-text { font-size: 2.5rem; font-weight: 900; color: var(--accent-blue); text-align: center; animation: popIn 0.2s ease; }
+        .tap-notice { font-size: 0.8rem; color: var(--text-dim); margin-top: 20px; font-weight: 600; background: #E9ECEF; padding: 4px 12px; border-radius: 12px; }
+
+        /* 2連判定ボタン */
+        .judge-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .judge-btn {
+            padding: 16px; font-size: 1.1rem; font-weight: 800; border: none; border-radius: 16px; cursor: pointer;
+            color: white; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.1s;
+        }
+        .judge-btn:active { transform: scale(0.97); }
+        .btn-correct { background: var(--accent-green); box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2); }
+        .btn-incorrect { background: var(--accent-red); box-shadow: 0 4px 12px rgba(231, 76, 60, 0.2); }
+
+        /* --- 結果画面 --- */
+        .result-score { font-size: 3.5rem; font-weight: 900; color: var(--accent-blue); margin: 20px 0; text-align: center; }
+        .result-text { font-size: 1.1rem; font-weight: 700; margin-bottom: 30px; line-height: 1.6; text-align: center; }
+
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<a href="https://kaoman0079-ops.github.io/Meridian-Node/" class="portal-back-btn">
+    <span style="margin-right: 6px; font-size: 1rem;">⏎</span> 🏠 Portal
+</a>
+
+<div class="container">
+    <h1>Meridian-Quiz</h1>
+    <div class="subtitle">超高速・一問一答暗記システム</div>
+
+    <div id="setup-screen">
+        <h3>① 出題する経絡を選択</h3>
+        <label class="all-select-wrapper">
+            <input type="checkbox" id="all-meridians" checked> すべての経絡を選択
+        </label>
+        <div class="checkbox-grid" id="meridian-list"></div>
+
+        <h3>② 出題する穴性を選択</h3>
+        <div class="checkbox-grid" id="type-list">
+            <label><input type="checkbox" value="五行穴" checked class="type-item-check"> 五行穴 (井〜合)</label>
+            <label><input type="checkbox" value="原穴" checked class="type-item-check"> 原穴</label>
+            <label><input type="checkbox" value="郄穴" checked class="type-item-check"> 郄穴</label>
+            <label><input type="checkbox" value="絡穴" checked class="type-item-check"> 絡穴</label>
+            <label><input type="checkbox" value="募穴" checked class="type-item-check"> 募穴</label>
+        </div>
+
+        <h3>③ 出題順序</h3>
+        <div class="option-group">
+            <label><input type="radio" name="order-style" value="sequence" checked> 経絡の順番通り（流注順）</label>
+            <label><input type="radio" name="order-style" value="random"> 完全ランダム（シャッフル）</label>
+        </div>
+
+        <button class="action-btn" id="start-btn">クイズをスタート</button>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; margin-bottom: 5px; color: var(--text-dim);">
+            <span id="quiz-count">第 1 問</span>
+            <span id="quiz-score-live">正解: 0</span>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div class="card-box" id="card-trigger">
+            <div class="q-hint" id="question-hint">手の太陰肺経</div>
+            <div class="q-text" id="question-main">井穴は？</div>
+            
+            <div class="divider hidden" id="card-divider"></div>
+            <div class="a-text hidden" id="answer-main">少商</div>
+            
+            <div class="tap-notice" id="tap-notice">画面をタップして答えを見る</div>
+        </div>
+
+        <div class="judge-group hidden" id="judge-buttons">
+            <button class="judge-btn btn-incorrect" id="btn-wrong">❌ 間違えた</button>
+            <button class="judge-btn btn-correct" id="btn-right">◯ 覚えてた！</button>
+        </div>
+    </div>
+
+    <div id="result-screen" class="hidden">
+        <h3>演習終了</h3>
+        <div class="result-score" id="final-score">0 / 10</div>
+        <div class="result-text" id="result-comment">お疲れ様でした！</div>
+        <button class="action-btn" id="restart-btn">もう一度挑戦する</button>
+    </div>
+</div>
+
+<script>
+const MERIDIANS = [
+    { full: "手太陰肺経", short: "肺経" }, { full: "手陽明大腸経", short: "大腸経" },
+    { full: "足陽明胃経", short: "胃経" }, { full: "足太陰脾経", short: "脾経" },
+    { full: "手少陰心経", short: "心経" }, { full: "手太陽小腸経", short: "小腸経" },
+    { full: "足太陽膀胱経", short: "膀胱経" }, { full: "足少陰腎経", short: "腎経" },
+    { full: "手厥陰心包経", short: "心包経" }, { full: "手少陽三焦経", short: "三焦経" },
+    { full: "足少陽胆経", short: "胆経" }, { full: "足厥陰肝経", short: "肝経" }
+];
+
+let rawDb = []; let quizPool = []; let currentIdx = 0; let correctCount = 0; let isFlipped = false;
+
+window.addEventListener("DOMContentLoaded", async () => {
+    generateCheckboxes();
+    await loadCsvData();
+    document.getElementById("all-meridians").addEventListener("change", toggleAll);
+    document.getElementById("start-btn").addEventListener("click", buildQuizSystem);
+    document.getElementById("card-trigger").addEventListener("click", flipCard);
+    document.getElementById("btn-right").addEventListener("click", () => handleJudgement(true));
+    document.getElementById("btn-wrong").addEventListener("click", () => handleJudgement(false));
+    document.getElementById("restart-btn").addEventListener("click", () => {
+        document.getElementById("result-screen").classList.add("hidden");
+        document.getElementById("setup-screen").classList.remove("hidden");
+    });
+});
+
+function generateCheckboxes() {
+    const container = document.getElementById("meridian-list");
+    container.innerHTML = MERIDIANS.map(m => `<label><input type="checkbox" value="${m.full}" checked class="m-check"> ${m.short}</label>`).join('');
+    document.querySelectorAll(".m-check").forEach(c => {
+        c.addEventListener("change", () => {
+            const all = document.querySelectorAll(".m-check");
+            const checked = document.querySelectorAll(".m-check:checked");
+            document.getElementById("all-meridians").checked = (all.length === checked.length);
+        });
+    });
+}
+
+function toggleAll() {
+    const state = document.getElementById("all-meridians").checked;
+    document.querySelectorAll(".m-check").forEach(c => c.checked = state);
+}
+
+async function loadCsvData() {
+    try {
+        const res = await fetch("data.csv");
+        const text = await res.text();
+        const lines = text.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+        const headers = lines[0].split(",");
+        rawDb = lines.slice(1).map(l => {
+            const val = l.split(","); let obj = {};
+            headers.forEach((h, i) => obj[h] = val[i]);
+            return obj;
+        });
+    } catch (err) { alert("data.csv のロードに失敗しました。"); }
+}
+
+function buildQuizSystem() {
+    const selectedMeridians = Array.from(document.querySelectorAll(".m-check:checked")).map(c => c.value);
+    const selectedTypes = Array.from(document.querySelectorAll(".type-item-check:checked")).map(c => c.value);
+    const orderStyle = document.querySelector('input[name="order-style"]:checked').value;
+
+    if (selectedMeridians.length === 0 || selectedTypes.length === 0) {
+        alert("経絡と穴性はそれぞれ1つ以上選択してください。"); return;
+    }
+
+    quizPool = [];
+    // 経絡の定義順（流注順）に沿って問題を走査して生成
+    MERIDIANS.forEach(mMeta => {
+        if (!selectedMeridians.includes(mMeta.full)) return;
+        const row = rawDb.find(r => r["経絡名"] === mMeta.full);
+        if (!row) return;
+
+        // 穴性のマッピング
+        selectedTypes.forEach(t => {
+            if (t === "五行穴") {
+                ["井穴", "滎穴", "輸穴", "経穴", "合穴"].forEach(subT => {
+                    if (row[subT]) quizPool.push({ hint: row["経絡名"], q: `${subT} は？`, a: row[subT] });
+                });
+            } else {
+                if (row[t]) quizPool.push({ hint: row["経絡名"], q: `${t} は？`, a: row[t] });
+            }
+        });
+    });
+
+    if (quizPool.length === 0) { alert("該当する問題データがありません。"); return; }
+    if (orderStyle === "random") shuffle(quizPool);
+
+    currentIdx = 0; correctCount = 0;
+    document.getElementById("setup-screen").classList.add("hidden");
+    document.getElementById("quiz-screen").classList.remove("hidden");
+    showQuestion();
+}
+
+function showQuestion() {
+    isFlipped = false;
+    document.getElementById("card-divider").classList.add("hidden");
+    document.getElementById("answer-main").classList.add("hidden");
+    document.getElementById("judge-buttons").classList.add("hidden");
+    document.getElementById("tap-notice").classList.remove("hidden");
+
+    const item = quizPool[currentIdx];
+    document.getElementById("question-hint").innerText = item.hint;
+    document.getElementById("question-main").innerText = item.q;
+    document.getElementById("answer-main").innerText = item.a;
+
+    document.getElementById("quiz-count").innerText = `問題 ${currentIdx + 1} / ${quizPool.length}`;
+    document.getElementById("quiz-score-live").innerText = `正解: ${correctCount}`;
+    document.getElementById("progress-bar").style.width = `${(currentIdx / quizPool.length) * 100}%`;
+}
+
+function flipCard() {
+    if (isFlipped) return;
+    isFlipped = true;
+    document.getElementById("card-divider").classList.remove("hidden");
+    document.getElementById("answer-main").classList.remove("hidden");
+    document.getElementById("judge-buttons").classList.remove("hidden");
+    document.getElementById("tap-notice").classList.add("hidden");
+}
+
+function handleJudgement(isRight) {
+    if (isRight) correctCount++;
+    currentIdx++;
+    if (currentIdx < quizPool.length) {
+        showQuestion();
+    } else {
+        showFinalResult();
+    }
+}
+
+function showFinalResult() {
+    document.getElementById("quiz-screen").classList.add("hidden");
+    document.getElementById("result-screen").classList.remove("hidden");
+    document.getElementById("final-score").innerText = `${correctCount} / ${quizPool.length}`;
+    
+    const rate = correctCount / quizPool.length;
+    let msg = "繰り返し挑戦して、反射で答えられるようにしましょう！";
+    if (rate === 1) msg = "完璧です！全問正解！素晴らしい仕上がりですね！";
+    else if (rate >= 0.8) msg = "素晴らしい正解率です！この調子を維持しましょう！";
+    document.getElementById("result-comment").innerText = msg;
+}
+
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
+</script>
+</body>
+</html>
