@@ -71,6 +71,17 @@
         /* --- 設定画面UI --- */
         .setup-section { margin-bottom: 30px; }
 
+        /* 問題数プルダウンのスタイリング */
+        .select-styled {
+            width: 100%; padding: 14px; border-radius: 14px; border: 2px solid var(--border-color);
+            font-size: 1rem; font-weight: 700; color: var(--text-main); background-color: var(--main-bg);
+            cursor: pointer; outline: none; transition: border-color 0.2s;
+            -webkit-appearance: none; appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%237F8C8D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+            background-repeat: no-repeat; background-position: right 15px center; background-size: 18px;
+        }
+        .select-styled:focus { border-color: var(--accent-blue); background-color: #FFFFFF; }
+
         .all-select-wrapper {
             background: #EDF4FA; padding: 14px; border-radius: 14px; margin-bottom: 12px;
             font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;
@@ -81,16 +92,13 @@
 
         /* リストの展開アニメーション */
         .expandable-list {
-            overflow: hidden;
-            transition: max-height 0.3s ease-out, opacity 0.2s ease;
-            max-height: 500px;
-            opacity: 1;
+            overflow: hidden; transition: max-height 0.3s ease-out, opacity 0.2s ease; max-height: 500px; opacity: 1;
         }
-        .expandable-list.collapsed {
-            max-height: 0;
-            opacity: 0;
-            margin-bottom: 0;
-            pointer-events: none;
+        .expandable-list.collapsed { max-height: 0; opacity: 0; margin-bottom: 0; pointer-events: none; }
+
+        /* 1行に2つ並ぶラジオボタングリッド */
+        .option-grid-2col {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
         }
 
         /* 1行4列のコンパクトグリッド */
@@ -109,14 +117,12 @@
         .checkbox-grid-2col {
             display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;
         }
-        .checkbox-grid-2col label, .option-group label {
+        .checkbox-grid-2col label, .option-grid-2col label {
             background: var(--main-bg); padding: 12px 15px; border-radius: 12px;
             border: 1px solid var(--border-color); font-size: 0.9rem; font-weight: 600;
             display: flex; align-items: center; cursor: pointer;
         }
-        .checkbox-grid-2col input, .option-group input { margin-right: 10px; transform: scale(1.1); }
-
-        .option-group { display: flex; flex-direction: column; gap: 8px; }
+        .checkbox-grid-2col input, .option-grid-2col input { margin-right: 10px; transform: scale(1.1); }
 
         .action-btn {
             width: 100%; padding: 18px; font-size: 1.1rem; background: var(--accent-blue);
@@ -125,6 +131,14 @@
             margin-top: 10px;
         }
         .action-btn:active { background: #2980B9; transform: scale(0.98); }
+
+        /* クイズ画面上部中断ボタン */
+        .quiz-abort-btn {
+            background: none; border: 1px solid var(--border-color); color: var(--text-dim);
+            padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: 700;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .quiz-abort-btn:hover { background: #FDEDEC; border-color: var(--accent-red); color: var(--accent-red); }
 
         /* --- クイズプレイ画面 --- */
         .hidden { display: none !important; }
@@ -169,15 +183,25 @@
 
     <div id="setup-screen">
         <section class="setup-section">
-            <h3>① 出題順序を選択</h3>
-            <div class="option-group">
-                <label><input type="radio" name="order-style" value="random" checked> 完全ランダム（シャッフル）</label>
-                <label><input type="radio" name="order-style" value="sequence"> 経絡の順番通り（流注順）</label>
+            <h3>問題数</h3>
+            <select id="question-count-select" class="select-styled">
+                <option value="5">5 問</option>
+                <option value="10" selected>10 問</option>
+                <option value="30">30 問</option>
+                <option value="all">全問出題</option>
+            </select>
+        </section>
+
+        <section class="setup-section">
+            <h3>出題順序</h3>
+            <div class="option-grid-2col">
+                <label><input type="radio" name="order-style" value="random" checked> 完全ランダム</label>
+                <label><input type="radio" name="order-style" value="sequence"> 順番通り(流注順)</label>
             </div>
         </section>
 
         <section class="setup-section">
-            <h3>② 出題する種類を選択</h3>
+            <h3>出題する種類</h3>
             <label class="all-select-wrapper">
                 <input type="checkbox" id="all-types" checked> すべての種類を出題
             </label>
@@ -193,7 +217,7 @@
         </section>
 
         <section class="setup-section">
-            <h3>③ 出題する経絡を選択</h3>
+            <h3>出題する経絡</h3>
             <label class="all-select-wrapper">
                 <input type="checkbox" id="all-meridians" checked> すべての経絡を出題
             </label>
@@ -206,9 +230,12 @@
     </div>
 
     <div id="quiz-screen" class="hidden">
-        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; margin-bottom: 5px; color: var(--text-dim);">
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: var(--text-dim);">
             <span id="quiz-count">第 1 問</span>
-            <span id="quiz-score-live">正解: 0</span>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span id="quiz-score-live">正解: 0</span>
+                <button class="quiz-abort-btn" id="abort-btn">✕ 中断</button>
+            </div>
         </div>
         <div class="progress-bar-container">
             <div class="progress-bar" id="progress-bar"></div>
@@ -252,7 +279,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     initMeridianChecks();
     await loadCsvData();
     
-    // トグルのイベント設定
     document.getElementById("all-types").addEventListener("change", (e) => {
         document.getElementById("type-list-container").classList.toggle("collapsed", e.target.checked);
     });
@@ -261,6 +287,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     });
 
     document.getElementById("start-btn").addEventListener("click", startQuiz);
+    document.getElementById("abort-btn").addEventListener("click", backToSetup);
     document.getElementById("card-trigger").addEventListener("click", () => {
         if (!isFlipped) {
             isFlipped = true;
@@ -272,10 +299,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     });
     document.getElementById("btn-right").addEventListener("click", () => judge(true));
     document.getElementById("btn-wrong").addEventListener("click", () => judge(false));
-    document.getElementById("restart-btn").addEventListener("click", () => {
-        resultScreen.classList.add("hidden");
-        document.getElementById("setup-screen").classList.remove("hidden");
-    });
+    document.getElementById("restart-btn").addEventListener("click", backToSetup);
 });
 
 function initMeridianChecks() {
@@ -300,6 +324,7 @@ async function loadCsvData() {
 function startQuiz() {
     const useAllTypes = document.getElementById("all-types").checked;
     const useAllMeridians = document.getElementById("all-meridians").checked;
+    const maxQuestionsSetting = document.getElementById("question-count-select").value;
     
     const types = useAllTypes ? ["五行穴", "原穴", "郄穴", "絡穴", "募穴"] : 
                   Array.from(document.querySelectorAll(".type-item-check:checked")).map(c => c.value);
@@ -310,7 +335,7 @@ function startQuiz() {
         alert("少なくとも1つ以上の種類と経絡を選択してください。"); return;
     }
 
-    quizPool = [];
+    let fullPool = [];
     MERIDIANS.forEach(mMeta => {
         if (!meridians.includes(mMeta.full)) return;
         const row = rawDb.find(r => r["経絡名"] === mMeta.full);
@@ -319,19 +344,29 @@ function startQuiz() {
         types.forEach(t => {
             if (t === "五行穴") {
                 ["井穴", "滎穴", "輸穴", "経穴", "合穴"].forEach(sub => {
-                    if (row[sub]) quizPool.push({ hint: row["経絡名"], q: `${sub} は？`, a: row[sub] });
+                    if (row[sub]) fullPool.push({ hint: row["経絡名"], q: `${sub} は？`, a: row[sub] });
                 });
             } else if (row[t]) {
-                quizPool.push({ hint: row["経絡名"], q: `${t} は？`, a: row[t] });
+                fullPool.push({ hint: row["経絡名"], q: `${t} は？`, a: row[t] });
             }
         });
     });
 
-    if (document.querySelector('input[name="order-style"]:checked').value === "random") {
-        for (let i = quizPool.length - 1; i > 0; i--) {
+    if (fullPool.length === 0) { alert("該当する問題データがありません。"); return; }
+
+    const isRandom = document.querySelector('input[name="order-style"]:checked').value === "random";
+    if (isRandom) {
+        for (let i = fullPool.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [quizPool[i], quizPool[j]] = [quizPool[j], quizPool[i]];
+            [fullPool[i], fullPool[j]] = [fullPool[j], fullPool[i]];
         }
+    }
+
+    if (maxQuestionsSetting === "all") {
+        quizPool = fullPool;
+    } else {
+        const num = parseInt(maxQuestionsSetting, 10);
+        quizPool = fullPool.slice(0, num);
     }
 
     currentIdx = 0; correctCount = 0;
@@ -367,6 +402,12 @@ function showResult() {
     res.classList.remove("hidden");
     document.getElementById("final-score").innerText = `${correctCount} / ${quizPool.length}`;
     document.getElementById("result-comment").innerText = (correctCount/quizPool.length === 1) ? "完璧です！全問正解！" : "お疲れ様でした！繰り返し挑戦しましょう！";
+}
+
+function backToSetup() {
+    document.getElementById("quiz-screen").classList.add("hidden");
+    document.getElementById("result-screen").classList.add("hidden");
+    document.getElementById("setup-screen").classList.remove("hidden");
 }
 </script>
 </body>
