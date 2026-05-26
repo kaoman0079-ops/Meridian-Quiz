@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Meridian-Quiz - 超高速一問一答システム</title>
+    <title>Meridian-Quiz - 究極の暗記UI</title>
     <style>
         :root {
             --main-bg: #F8F9FA;
@@ -61,79 +61,100 @@
             box-sizing: border-box;
         }
         @media (max-width: 640px) {
-            .container { margin-top: 70px; padding: 25px 15px; border-radius: 18px; }
+            .container { margin-top: 70px; padding: 25px 12px; border-radius: 18px; }
         }
 
         h1 { font-size: 1.8rem; font-weight: 800; margin: 0 0 5px 0; letter-spacing: -0.02em; text-align: center; }
         .subtitle { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 25px; font-weight: 600; text-align: center; }
-        h3 { font-size: 1rem; margin: 20px 0 10px 5px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+        h3 { font-size: 0.9rem; margin: 25px 0 12px 5px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
 
         /* --- 設定画面UI --- */
-        .all-select-wrapper {
-            background: #EDF4FA; padding: 12px; border-radius: 14px; margin-bottom: 10px;
-            font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; color: #2980B9;
-        }
-        .all-select-wrapper input { margin-right: 8px; transform: scale(1.1); }
+        .setup-section { margin-bottom: 30px; }
 
-        .checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
-        .checkbox-grid label, .option-group label {
+        .all-select-wrapper {
+            background: #EDF4FA; padding: 14px; border-radius: 14px; margin-bottom: 12px;
+            font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: #2980B9; transition: background 0.2s;
+        }
+        .all-select-wrapper:hover { background: #E1EEF7; }
+        .all-select-wrapper input { margin-right: 10px; transform: scale(1.2); }
+
+        /* リストの展開アニメーション */
+        .expandable-list {
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.2s ease;
+            max-height: 500px;
+            opacity: 1;
+        }
+        .expandable-list.collapsed {
+            max-height: 0;
+            opacity: 0;
+            margin-bottom: 0;
+            pointer-events: none;
+        }
+
+        /* 1行4列のコンパクトグリッド */
+        .checkbox-grid-4col {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 15px;
+        }
+        .checkbox-grid-4col label {
+            background: var(--main-bg); padding: 10px 4px; border-radius: 10px;
+            border: 1px solid var(--border-color); font-size: 0.8rem; font-weight: 700;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 6px; cursor: pointer; text-align: center;
+        }
+        .checkbox-grid-4col input { margin: 0; transform: scale(1.1); }
+
+        /* 穴性用の2列グリッド */
+        .checkbox-grid-2col {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;
+        }
+        .checkbox-grid-2col label, .option-group label {
             background: var(--main-bg); padding: 12px 15px; border-radius: 12px;
             border: 1px solid var(--border-color); font-size: 0.9rem; font-weight: 600;
             display: flex; align-items: center; cursor: pointer;
         }
-        .checkbox-grid input, .option-group input { margin-right: 10px; transform: scale(1.1); }
+        .checkbox-grid-2col input, .option-group input { margin-right: 10px; transform: scale(1.1); }
 
-        .option-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 25px; }
+        .option-group { display: flex; flex-direction: column; gap: 8px; }
 
         .action-btn {
-            width: 100%; padding: 16px; font-size: 1.05rem; background: var(--accent-blue);
-            color: white; border: none; border-radius: 16px; cursor: pointer; font-weight: 800;
+            width: 100%; padding: 18px; font-size: 1.1rem; background: var(--accent-blue);
+            color: white; border: none; border-radius: 18px; cursor: pointer; font-weight: 800;
             box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2); transition: background 0.2s, transform 0.1s;
+            margin-top: 10px;
         }
         .action-btn:active { background: #2980B9; transform: scale(0.98); }
 
-        /* --- クイズプレイ画面レイアウト --- */
+        /* --- クイズプレイ画面 --- */
         .hidden { display: none !important; }
-        
         .progress-bar-container { width: 100%; background: #E9ECEF; height: 6px; border-radius: 3px; margin-bottom: 25px; overflow: hidden; }
         .progress-bar { width: 0%; height: 100%; background: var(--accent-blue); transition: width 0.2s ease; }
 
-        /* フラッシュカード型ボックス */
         .card-box {
             background: var(--main-bg); border: 1px solid var(--border-color);
-            padding: 40px 20px; border-radius: 20px; min-height: 220px;
+            padding: 45px 20px; border-radius: 20px; min-height: 240px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; margin-bottom: 25px; transition: background 0.1s;
+            cursor: pointer; margin-bottom: 25px;
         }
-        .card-box:active { background: #EBF5FB; }
-
-        .q-hint { font-size: 0.9rem; color: var(--text-dim); font-weight: 700; margin-bottom: 15px; letter-spacing: 0.05em; }
-        .q-text { font-size: 1.4rem; font-weight: 800; text-align: center; line-height: 1.4; color: var(--text-main); }
-        
+        .q-hint { font-size: 1rem; color: var(--text-dim); font-weight: 700; margin-bottom: 15px; letter-spacing: 0.05em; }
+        .q-text { font-size: 1.5rem; font-weight: 800; text-align: center; line-height: 1.4; color: var(--text-main); }
         .divider { width: 80%; height: 1px; background: var(--border-color); margin: 25px 0; }
-
-        .a-text { font-size: 2.5rem; font-weight: 900; color: var(--accent-blue); text-align: center; animation: popIn 0.2s ease; }
+        .a-text { font-size: 2.8rem; font-weight: 900; color: var(--accent-blue); text-align: center; animation: popIn 0.15s ease; }
         .tap-notice { font-size: 0.8rem; color: var(--text-dim); margin-top: 20px; font-weight: 600; background: #E9ECEF; padding: 4px 12px; border-radius: 12px; }
 
-        /* 2連判定ボタン */
         .judge-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         .judge-btn {
-            padding: 16px; font-size: 1.1rem; font-weight: 800; border: none; border-radius: 16px; cursor: pointer;
-            color: white; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.1s;
+            padding: 18px; font-size: 1.1rem; font-weight: 800; border: none; border-radius: 16px; cursor: pointer;
+            color: white; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .judge-btn:active { transform: scale(0.97); }
-        .btn-correct { background: var(--accent-green); box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2); }
-        .btn-incorrect { background: var(--accent-red); box-shadow: 0 4px 12px rgba(231, 76, 60, 0.2); }
+        .btn-correct { background: var(--accent-green); }
+        .btn-incorrect { background: var(--accent-red); }
 
-        /* --- 結果画面 --- */
         .result-score { font-size: 3.5rem; font-weight: 900; color: var(--accent-blue); margin: 20px 0; text-align: center; }
         .result-text { font-size: 1.1rem; font-weight: 700; margin-bottom: 30px; line-height: 1.6; text-align: center; }
 
-        @keyframes popIn {
-            0% { transform: scale(0.9); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+        @keyframes popIn { 0% { transform: scale(0.92); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -147,28 +168,41 @@
     <div class="subtitle">超高速・一問一答暗記システム</div>
 
     <div id="setup-screen">
-        <h3>① 出題する経絡を選択</h3>
-        <label class="all-select-wrapper">
-            <input type="checkbox" id="all-meridians" checked> すべての経絡を選択
-        </label>
-        <div class="checkbox-grid" id="meridian-list"></div>
+        <section class="setup-section">
+            <h3>① 出題順序を選択</h3>
+            <div class="option-group">
+                <label><input type="radio" name="order-style" value="random" checked> 完全ランダム（シャッフル）</label>
+                <label><input type="radio" name="order-style" value="sequence"> 経絡の順番通り（流注順）</label>
+            </div>
+        </section>
 
-        <h3>② 出題する穴性を選択</h3>
-        <div class="checkbox-grid" id="type-list">
-            <label><input type="checkbox" value="五行穴" checked class="type-item-check"> 五行穴 (井〜合)</label>
-            <label><input type="checkbox" value="原穴" checked class="type-item-check"> 原穴</label>
-            <label><input type="checkbox" value="郄穴" checked class="type-item-check"> 郄穴</label>
-            <label><input type="checkbox" value="絡穴" checked class="type-item-check"> 絡穴</label>
-            <label><input type="checkbox" value="募穴" checked class="type-item-check"> 募穴</label>
-        </div>
+        <section class="setup-section">
+            <h3>② 出題する種類を選択</h3>
+            <label class="all-select-wrapper">
+                <input type="checkbox" id="all-types" checked> すべての種類を出題
+            </label>
+            <div class="expandable-list collapsed" id="type-list-container">
+                <div class="checkbox-grid-2col">
+                    <label><input type="checkbox" value="五行穴" checked class="type-item-check"> 五行穴 (井〜合)</label>
+                    <label><input type="checkbox" value="原穴" checked class="type-item-check"> 原穴</label>
+                    <label><input type="checkbox" value="郄穴" checked class="type-item-check"> 郄穴</label>
+                    <label><input type="checkbox" value="絡穴" checked class="type-item-check"> 絡穴</label>
+                    <label><input type="checkbox" value="募穴" checked class="type-item-check"> 募穴</label>
+                </div>
+            </div>
+        </section>
 
-        <h3>③ 出題順序</h3>
-        <div class="option-group">
-            <label><input type="radio" name="order-style" value="sequence" checked> 経絡の順番通り（流注順）</label>
-            <label><input type="radio" name="order-style" value="random"> 完全ランダム（シャッフル）</label>
-        </div>
+        <section class="setup-section">
+            <h3>③ 出題する経絡を選択</h3>
+            <label class="all-select-wrapper">
+                <input type="checkbox" id="all-meridians" checked> すべての経絡を出題
+            </label>
+            <div class="expandable-list collapsed" id="meridian-list-container">
+                <div class="checkbox-grid-4col" id="meridian-list"></div>
+            </div>
+        </section>
 
-        <button class="action-btn" id="start-btn">クイズをスタート</button>
+        <button class="action-btn" id="start-btn">演習を開始する</button>
     </div>
 
     <div id="quiz-screen" class="hidden">
@@ -181,26 +215,24 @@
         </div>
 
         <div class="card-box" id="card-trigger">
-            <div class="q-hint" id="question-hint">手の太陰肺経</div>
+            <div class="q-hint" id="question-hint">手太陰肺経</div>
             <div class="q-text" id="question-main">井穴は？</div>
-            
             <div class="divider hidden" id="card-divider"></div>
             <div class="a-text hidden" id="answer-main">少商</div>
-            
-            <div class="tap-notice" id="tap-notice">画面をタップして答えを見る</div>
+            <div class="tap-notice" id="tap-notice">タップして答えを見る</div>
         </div>
 
         <div class="judge-group hidden" id="judge-buttons">
-            <button class="judge-btn btn-incorrect" id="btn-wrong">❌ 間違えた</button>
-            <button class="judge-btn btn-correct" id="btn-right">◯ 覚えてた！</button>
+            <button class="judge-btn btn-incorrect" id="btn-wrong">❌ 誤答</button>
+            <button class="judge-btn btn-correct" id="btn-right">◯ 正解</button>
         </div>
     </div>
 
     <div id="result-screen" class="hidden">
         <h3>演習終了</h3>
-        <div class="result-score" id="final-score">0 / 10</div>
+        <div class="result-score" id="final-score">0 / 0</div>
         <div class="result-text" id="result-comment">お疲れ様でした！</div>
-        <button class="action-btn" id="restart-btn">もう一度挑戦する</button>
+        <button class="action-btn" id="restart-btn">もう一度挑戦</button>
     </div>
 </div>
 
@@ -217,34 +249,38 @@ const MERIDIANS = [
 let rawDb = []; let quizPool = []; let currentIdx = 0; let correctCount = 0; let isFlipped = false;
 
 window.addEventListener("DOMContentLoaded", async () => {
-    generateCheckboxes();
+    initMeridianChecks();
     await loadCsvData();
-    document.getElementById("all-meridians").addEventListener("change", toggleAll);
-    document.getElementById("start-btn").addEventListener("click", buildQuizSystem);
-    document.getElementById("card-trigger").addEventListener("click", flipCard);
-    document.getElementById("btn-right").addEventListener("click", () => handleJudgement(true));
-    document.getElementById("btn-wrong").addEventListener("click", () => handleJudgement(false));
+    
+    // トグルのイベント設定
+    document.getElementById("all-types").addEventListener("change", (e) => {
+        document.getElementById("type-list-container").classList.toggle("collapsed", e.target.checked);
+    });
+    document.getElementById("all-meridians").addEventListener("change", (e) => {
+        document.getElementById("meridian-list-container").classList.toggle("collapsed", e.target.checked);
+    });
+
+    document.getElementById("start-btn").addEventListener("click", startQuiz);
+    document.getElementById("card-trigger").addEventListener("click", () => {
+        if (!isFlipped) {
+            isFlipped = true;
+            document.getElementById("card-divider").classList.remove("hidden");
+            document.getElementById("answer-main").classList.remove("hidden");
+            document.getElementById("judge-buttons").classList.remove("hidden");
+            document.getElementById("tap-notice").classList.add("hidden");
+        }
+    });
+    document.getElementById("btn-right").addEventListener("click", () => judge(true));
+    document.getElementById("btn-wrong").addEventListener("click", () => judge(false));
     document.getElementById("restart-btn").addEventListener("click", () => {
-        document.getElementById("result-screen").classList.add("hidden");
+        resultScreen.classList.add("hidden");
         document.getElementById("setup-screen").classList.remove("hidden");
     });
 });
 
-function generateCheckboxes() {
-    const container = document.getElementById("meridian-list");
-    container.innerHTML = MERIDIANS.map(m => `<label><input type="checkbox" value="${m.full}" checked class="m-check"> ${m.short}</label>`).join('');
-    document.querySelectorAll(".m-check").forEach(c => {
-        c.addEventListener("change", () => {
-            const all = document.querySelectorAll(".m-check");
-            const checked = document.querySelectorAll(".m-check:checked");
-            document.getElementById("all-meridians").checked = (all.length === checked.length);
-        });
-    });
-}
-
-function toggleAll() {
-    const state = document.getElementById("all-meridians").checked;
-    document.querySelectorAll(".m-check").forEach(c => c.checked = state);
+function initMeridianChecks() {
+    const list = document.getElementById("meridian-list");
+    list.innerHTML = MERIDIANS.map(m => `<label><input type="checkbox" value="${m.full}" checked class="m-check"><span>${m.short}</span></label>`).join('');
 }
 
 async function loadCsvData() {
@@ -258,39 +294,45 @@ async function loadCsvData() {
             headers.forEach((h, i) => obj[h] = val[i]);
             return obj;
         });
-    } catch (err) { alert("data.csv のロードに失敗しました。"); }
+    } catch (e) { console.error("Data load error"); }
 }
 
-function buildQuizSystem() {
-    const selectedMeridians = Array.from(document.querySelectorAll(".m-check:checked")).map(c => c.value);
-    const selectedTypes = Array.from(document.querySelectorAll(".type-item-check:checked")).map(c => c.value);
-    const orderStyle = document.querySelector('input[name="order-style"]:checked').value;
+function startQuiz() {
+    const useAllTypes = document.getElementById("all-types").checked;
+    const useAllMeridians = document.getElementById("all-meridians").checked;
+    
+    const types = useAllTypes ? ["五行穴", "原穴", "郄穴", "絡穴", "募穴"] : 
+                  Array.from(document.querySelectorAll(".type-item-check:checked")).map(c => c.value);
+    const meridians = useAllMeridians ? MERIDIANS.map(m => m.full) : 
+                      Array.from(document.querySelectorAll(".m-check:checked")).map(c => c.value);
 
-    if (selectedMeridians.length === 0 || selectedTypes.length === 0) {
-        alert("経絡と穴性はそれぞれ1つ以上選択してください。"); return;
+    if (types.length === 0 || meridians.length === 0) {
+        alert("少なくとも1つ以上の種類と経絡を選択してください。"); return;
     }
 
     quizPool = [];
-    // 経絡の定義順（流注順）に沿って問題を走査して生成
     MERIDIANS.forEach(mMeta => {
-        if (!selectedMeridians.includes(mMeta.full)) return;
+        if (!meridians.includes(mMeta.full)) return;
         const row = rawDb.find(r => r["経絡名"] === mMeta.full);
         if (!row) return;
 
-        // 穴性のマッピング
-        selectedTypes.forEach(t => {
+        types.forEach(t => {
             if (t === "五行穴") {
-                ["井穴", "滎穴", "輸穴", "経穴", "合穴"].forEach(subT => {
-                    if (row[subT]) quizPool.push({ hint: row["経絡名"], q: `${subT} は？`, a: row[subT] });
+                ["井穴", "滎穴", "輸穴", "経穴", "合穴"].forEach(sub => {
+                    if (row[sub]) quizPool.push({ hint: row["経絡名"], q: `${sub} は？`, a: row[sub] });
                 });
-            } else {
-                if (row[t]) quizPool.push({ hint: row["経絡名"], q: `${t} は？`, a: row[t] });
+            } else if (row[t]) {
+                quizPool.push({ hint: row["経絡名"], q: `${t} は？`, a: row[t] });
             }
         });
     });
 
-    if (quizPool.length === 0) { alert("該当する問題データがありません。"); return; }
-    if (orderStyle === "random") shuffle(quizPool);
+    if (document.querySelector('input[name="order-style"]:checked').value === "random") {
+        for (let i = quizPool.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [quizPool[i], quizPool[j]] = [quizPool[j], quizPool[i]];
+        }
+    }
 
     currentIdx = 0; correctCount = 0;
     document.getElementById("setup-screen").classList.add("hidden");
@@ -300,57 +342,31 @@ function buildQuizSystem() {
 
 function showQuestion() {
     isFlipped = false;
+    const q = quizPool[currentIdx];
+    document.getElementById("question-hint").innerText = q.hint;
+    document.getElementById("question-main").innerText = q.q;
+    document.getElementById("answer-main").innerText = q.a;
+    document.getElementById("quiz-count").innerText = `問題 ${currentIdx + 1} / ${quizPool.length}`;
+    document.getElementById("quiz-score-live").innerText = `正解: ${correctCount}`;
+    document.getElementById("progress-bar").style.width = `${(currentIdx / quizPool.length) * 100}%`;
     document.getElementById("card-divider").classList.add("hidden");
     document.getElementById("answer-main").classList.add("hidden");
     document.getElementById("judge-buttons").classList.add("hidden");
     document.getElementById("tap-notice").classList.remove("hidden");
-
-    const item = quizPool[currentIdx];
-    document.getElementById("question-hint").innerText = item.hint;
-    document.getElementById("question-main").innerText = item.q;
-    document.getElementById("answer-main").innerText = item.a;
-
-    document.getElementById("quiz-count").innerText = `問題 ${currentIdx + 1} / ${quizPool.length}`;
-    document.getElementById("quiz-score-live").innerText = `正解: ${correctCount}`;
-    document.getElementById("progress-bar").style.width = `${(currentIdx / quizPool.length) * 100}%`;
 }
 
-function flipCard() {
-    if (isFlipped) return;
-    isFlipped = true;
-    document.getElementById("card-divider").classList.remove("hidden");
-    document.getElementById("answer-main").classList.remove("hidden");
-    document.getElementById("judge-buttons").classList.remove("hidden");
-    document.getElementById("tap-notice").classList.add("hidden");
-}
-
-function handleJudgement(isRight) {
-    if (isRight) correctCount++;
+function judge(win) {
+    if (win) correctCount++;
     currentIdx++;
-    if (currentIdx < quizPool.length) {
-        showQuestion();
-    } else {
-        showFinalResult();
-    }
+    if (currentIdx < quizPool.length) showQuestion(); else showResult();
 }
 
-function showFinalResult() {
+function showResult() {
     document.getElementById("quiz-screen").classList.add("hidden");
-    document.getElementById("result-screen").classList.remove("hidden");
+    const res = document.getElementById("result-screen");
+    res.classList.remove("hidden");
     document.getElementById("final-score").innerText = `${correctCount} / ${quizPool.length}`;
-    
-    const rate = correctCount / quizPool.length;
-    let msg = "繰り返し挑戦して、反射で答えられるようにしましょう！";
-    if (rate === 1) msg = "完璧です！全問正解！素晴らしい仕上がりですね！";
-    else if (rate >= 0.8) msg = "素晴らしい正解率です！この調子を維持しましょう！";
-    document.getElementById("result-comment").innerText = msg;
-}
-
-function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
+    document.getElementById("result-comment").innerText = (correctCount/quizPool.length === 1) ? "完璧です！全問正解！" : "お疲れ様でした！繰り返し挑戦しましょう！";
 }
 </script>
 </body>
